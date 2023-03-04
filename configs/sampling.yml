@@ -1,0 +1,10 @@
+model:
+  checkpoint: ./pretrained_models/pretrained_diffusion.pt
+
+sample:
+  seed: 2021
+  num_samples: 4
+  num_steps: 1000
+  pos_only: False
+  center_pos_mode: protein
+  sample_num_atoms: prior

@@ -1,0 +1,64 @@
+data:
+  name: pl
+  path: ./data/crossdocked_v1.1_rmsd1.0_pocket10
+  split: ./data/crossdocked_pocket10_pose_split.pt
+  transform:
+    ligand_atom_mode: add_aromatic
+    random_rot: False
+
+model:
+  model_mean_type: C0  # ['noise', 'C0']
+  beta_schedule: sigmoid
+  beta_start: 1.e-7
+  beta_end: 2.e-3
+  v_beta_schedule: cosine
+  v_beta_s: 0.01
+  num_diffusion_timesteps: 1000
+  loss_v_weight: 100.
+  sample_time_method: symmetric  # ['importance', 'symmetric']
+
+  time_emb_dim: 0
+  time_emb_mode: simple
+  center_pos_mode: protein
+
+  node_indicator: True
+  model_type: uni_o2
+  num_blocks: 1
+  num_layers: 9
+  hidden_dim: 128
+  n_heads: 16
+  edge_feat_dim: 4  # edge type feat
+  num_r_gaussian: 20
+  knn: 32 # !
+  num_node_types: 8
+  act_fn: relu
+  norm: True
+  cutoff_mode: knn  # [radius, none]
+  ew_net_type: global  # [r, m, none]
+  num_x2h: 1
+  num_h2x: 1
+  r_max: 10.
+  x2h_out_fc: False
+  sync_twoup: False
+
+train:
+  seed: 2021
+  batch_size: 4
+  num_workers: 4
+  n_acc_batch: 1
+  max_iters: 10000000
+  val_freq: 100
+  pos_noise_std: 0.1
+  max_grad_norm: 8.0
+  bond_loss_weight: 1.0
+  optimizer:
+    type: adam
+    lr: 5.e-4
+    weight_decay: 0
+    beta1: 0.95
+    beta2: 0.999
+  scheduler:
+    type: plateau
+    factor: 0.6
+    patience: 10
+    min_lr: 1.e-6
