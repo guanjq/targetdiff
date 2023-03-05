@@ -43,7 +43,7 @@ The data used for training / evaluating the model are organized in the [data](ht
 
 To train the model from scratch, you need to download the preprocessed lmdb file and split file.
 
-To evaluate the model on the test set, you need to download the test_set.zip. It includes the original PDF files that will be used in Vina Docking.
+To evaluate the model on the test set, you need to download the test_set.zip. It includes the original PDB files that will be used in Vina Docking.
 
 ## Training
 ### Training from scratch
