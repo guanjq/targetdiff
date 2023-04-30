@@ -41,9 +41,16 @@ The code should work with PyTorch >= 1.9.0 and PyG >= 2.0. You can change the pa
 ## Data
 The data used for training / evaluating the model are organized in the [data](https://drive.google.com/drive/folders/1j21cc7-97TedKh_El5E34yI8o5ckI7eK?usp=share_link) Google Drive folder.
 
-To train the model from scratch, you need to download the preprocessed lmdb file and split file.
+To train the model from scratch, you need to download the preprocessed lmdb file and split file:
+* `crossdocked_v1.1_rmsd1.0_pocket10_processed_final.lmdb`
+* `crossdocked_pocket10_pose_split.pt`
 
-To evaluate the model on the test set, you need to download the test_set.zip. It includes the original PDB files that will be used in Vina Docking.
+To evaluate the model on the test set, you need to download the `test_set.zip`. It includes the original PDB files that will be used in Vina Docking.
+
+If you want to process the dataset from scratch, you need to download CrossDocked2020 v1.1 from [here](https://bits.csb.pitt.edu/files/crossdock2020/), and run the scripts in `scripts/data_preparation`:
+* `clean_crossdocked.py` will filter the original dataset and keep the ones with RMSD < 1A. (corresponds to `crossdocked_v1.1_rmsd1.0.tar.gz` in the drive)
+* `extract_pockets.py` clip the original protein file to a 10A region around the binding molecule. (It will generate a `index.pkl` file, but you don't need that if you have downloaded .lmdb file.)
+* `split_pl_dataset.py` split the training and test set.
 
 ## Training
 ### Training from scratch
