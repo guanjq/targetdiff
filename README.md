@@ -33,10 +33,26 @@ conda install pyg -c pyg
 conda install rdkit openbabel tensorboard pyyaml easydict python-lmdb -c conda-forge
 
 # For Vina Docking
-pip install meeko==0.1.dev3 scipy pdb2pqr vina==1.2.2 
+pip install meeko==0.1.dev3 scipy pdb2pqr vina==1.2.2 git+https://github.com/Valdes-Tresanco-MS/AutoDockTools_py3.git@aee55d50d5bdcfdbcd80220499df8cde2a8f4b2a
 python -m pip install git+https://github.com/Valdes-Tresanco-MS/AutoDockTools_py3
 ```
 The code should work with PyTorch >= 1.9.0 and PyG >= 2.0. You can change the package version according to your need.
+
+### (Alternatively) Install via Mamba
+Install Mamba
+
+```bash
+wget "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh"
+bash Mambaforge-$(uname)-$(uname -m).sh  # accept all terms and install to the default location
+rm Mambaforge-$(uname)-$(uname -m).sh  # (optionally) remove installer after using it
+source ~/.bashrc  # alternatively, one can restart their shell session to achieve the same result
+```
+
+Create Mamba environment
+```bash
+mamba env create -f environment.yaml
+conda activate targetdiff  # note: one still needs to use `conda` to (de)activate environments
+```
 
 ## Data
 The data used for training / evaluating the model are organized in the [data](https://drive.google.com/drive/folders/1j21cc7-97TedKh_El5E34yI8o5ckI7eK?usp=share_link) Google Drive folder.
