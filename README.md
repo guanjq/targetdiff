@@ -33,7 +33,7 @@ conda install pyg -c pyg
 conda install rdkit openbabel tensorboard pyyaml easydict python-lmdb -c conda-forge
 
 # For Vina Docking
-pip install meeko==0.1.dev3 scipy pdb2pqr vina==1.2.2
+pip install meeko==0.1.dev3 scipy pdb2pqr vina==1.2.2 
 python -m pip install git+https://github.com/Valdes-Tresanco-MS/AutoDockTools_py3
 ```
 The code should work with PyTorch >= 1.9.0 and PyG >= 2.0. You can change the package version according to your need.
