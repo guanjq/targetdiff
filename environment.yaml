@@ -1,7 +1,7 @@
 name: targetdiff
 channels:
-  - pytorch
   - pyg
+  - pytorch
   - nvidia
   - conda-forge
 dependencies:
@@ -11,8 +11,8 @@ dependencies:
   - aiohttp=3.7.4.post0=py38h497a2fe_1
   - async-timeout=3.0.1=py_1000
   - attrs=23.1.0=pyh71513ae_1
-  - blas=2.116=openblas
-  - blas-devel=3.9.0=16_linux64_openblas
+  - blas=2.116=mkl
+  - blas-devel=3.9.0=16_linux64_mkl
   - blinker=1.6.2=pyhd8ed1ab_0
   - boost=1.74.0=py38h2b96118_5
   - boost-cpp=1.74.0=h75c5d50_8
@@ -62,10 +62,8 @@ dependencies:
   - cuda-sanitizer-api=12.1.105=0
   - cuda-toolkit=11.6.1=0
   - cuda-tools=11.6.1=0
-  - cuda-version=11.8=h70ddcb2_2
   - cuda-visual-tools=11.6.1=0
-  - cudatoolkit=11.8.0=h37601d7_11
-  - cudnn=8.8.0.121=h0800d71_0
+  - cudatoolkit=11.7.0=hd8887f6_10
   - cycler=0.11.0=pyhd8ed1ab_0
   - easydict=1.9=py_0
   - expat=2.5.0=hcb278e6_1
@@ -150,15 +148,14 @@ dependencies:
   - markdown=3.4.3=pyhd8ed1ab_0
   - markupsafe=2.1.2=py38h1de0b5d_0
   - matplotlib-base=3.7.1=py38hd6c3c57_0
-  - mkl=2022.2.1=h84fe81f_16997
-  - mkl-devel=2022.2.1=ha770c72_16998
-  - mkl-include=2022.2.1=h84fe81f_16997
+  - mkl=2022.1.0=h84fe81f_915
+  - mkl-devel=2022.1.0=ha770c72_916
+  - mkl-include=2022.1.0=h84fe81f_915
   - mpc=1.3.1=hfe3b2da_0
   - mpfr=4.2.0=hb012696_0
   - mpmath=1.3.0=pyhd8ed1ab_0
   - multidict=6.0.4=py38h1de0b5d_0
   - munkres=1.1.4=pyh9f0ad1d_0
-  - nccl=2.15.5.1=h0800d71_0
   - ncurses=6.3=h27087fc_1
   - networkx=3.1=pyhd8ed1ab_0
   - ninja=1.11.1=h924138e_0
@@ -167,6 +164,7 @@ dependencies:
   - oauthlib=3.2.2=pyhd8ed1ab_0
   - openbabel=3.1.1=py38h3c5e4c7_5
   - openblas=0.3.21=pthreads_h320a7e8_3
+  - openh264=2.1.1=h780b84a_0
   - openjpeg=2.5.0=hfec8fc6_2
   - openssl=3.1.0=hd590300_3
   - packaging=23.1=pyhd8ed1ab_0
@@ -194,10 +192,10 @@ dependencies:
   - python-lmdb=1.4.1=py38h8dc9893_0
   - python-tzdata=2023.3=pyhd8ed1ab_0
   - python_abi=3.8=3_cp38
-  - pytorch=1.13.1=cuda112py38hd94e077_200
+  - pytorch=1.13.1=py3.8_cuda11.6_cudnn8.3.2_0
   - pytorch-cluster=1.6.0=py38_torch_1.13.0_cu116
   - pytorch-cuda=11.6=h867d48c_1
-  - pytorch-mutex=1.0=cpu
+  - pytorch-mutex=1.0=cuda
   - pytorch-scatter=2.1.0=py38_torch_1.13.0_cu116
   - pytorch-sparse=0.6.15=py38_torch_1.13.0_cu116
   - pytz=2023.3=pyhd8ed1ab_0
@@ -222,6 +220,8 @@ dependencies:
   - tensorboard-data-server=0.7.0=py38h3d167d9_0
   - threadpoolctl=3.1.0=pyh8a188c0_0
   - tk=8.6.12=h27826a3_0
+  - torchaudio=0.13.1=py38_cu116
+  - torchvision=0.14.1=py38_cu116
   - tqdm=4.65.0=pyhd8ed1ab_1
   - typing-extensions=4.5.0=hd8ed1ab_0
   - typing_extensions=4.5.0=pyha770c72_0
