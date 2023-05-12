@@ -1,6 +1,7 @@
 name: targetdiff
 channels:
   - pytorch
+  - pyg
   - nvidia
   - conda-forge
 dependencies:
@@ -10,11 +11,11 @@ dependencies:
   - aiohttp=3.7.4.post0=py38h497a2fe_1
   - async-timeout=3.0.1=py_1000
   - attrs=23.1.0=pyh71513ae_1
-  - blas=2.116=mkl
-  - blas-devel=3.9.0=16_linux64_mkl
+  - blas=2.116=openblas
+  - blas-devel=3.9.0=16_linux64_openblas
   - blinker=1.6.2=pyhd8ed1ab_0
-  - boost=1.78.0=py38h4e30db6_4
-  - boost-cpp=1.78.0=h6582d0a_3
+  - boost=1.74.0=py38h2b96118_5
+  - boost-cpp=1.74.0=h75c5d50_8
   - brotli=1.0.9=h166bdaf_8
   - brotli-bin=1.0.9=h166bdaf_8
   - brotlipy=0.7.0=py38h0a891b7_1005
@@ -22,12 +23,13 @@ dependencies:
   - c-ares=1.18.1=h7f98852_0
   - ca-certificates=2023.5.7=hbcca054_0
   - cachetools=5.3.0=pyhd8ed1ab_0
-  - cairo=1.16.0=h35add3b_1015
+  - cairo=1.16.0=ha61ee94_1014
   - certifi=2023.5.7=pyhd8ed1ab_0
   - cffi=1.15.1=py38h4a40e3a_3
   - chardet=4.0.0=py38h578d9bd_3
   - charset-normalizer=3.1.0=pyhd8ed1ab_0
   - click=8.1.3=unix_pyhd8ed1ab_2
+  - colorama=0.4.6=pyhd8ed1ab_0
   - contourpy=1.0.7=py38hfbd4bf9_0
   - cryptography=40.0.2=py38h3d167d9_0
   - cuda=11.6.1=0
@@ -60,7 +62,10 @@ dependencies:
   - cuda-sanitizer-api=12.1.105=0
   - cuda-toolkit=11.6.1=0
   - cuda-tools=11.6.1=0
+  - cuda-version=11.8=h70ddcb2_2
   - cuda-visual-tools=11.6.1=0
+  - cudatoolkit=11.8.0=h37601d7_11
+  - cudnn=8.8.0.121=h0800d71_0
   - cycler=0.11.0=pyhd8ed1ab_0
   - easydict=1.9=py_0
   - expat=2.5.0=hcb278e6_1
@@ -82,22 +87,23 @@ dependencies:
   - google-auth-oauthlib=1.0.0=pyhd8ed1ab_0
   - greenlet=2.0.2=py38h8dc9893_0
   - grpcio=1.54.2=py38h8dc9893_0
-  - icu=72.1=hcb278e6_0
+  - icu=70.1=h27087fc_0
   - idna=3.4=pyhd8ed1ab_0
   - importlib-metadata=6.6.0=pyha770c72_0
   - importlib-resources=5.12.0=pyhd8ed1ab_0
   - importlib_resources=5.12.0=pyhd8ed1ab_0
   - jinja2=3.1.2=pyhd8ed1ab_1
+  - joblib=1.2.0=pyhd8ed1ab_0
   - kiwisolver=1.4.4=py38h43d8883_1
   - lcms2=2.15=haa2dc70_1
   - ld_impl_linux-64=2.40=h41732ed_0
   - lerc=4.0.0=h27087fc_0
   - libabseil=20230125.0=cxx17_hcb278e6_1
-  - libblas=3.9.0=16_linux64_mkl
+  - libblas=3.9.0=16_linux64_openblas
   - libbrotlicommon=1.0.9=h166bdaf_8
   - libbrotlidec=1.0.9=h166bdaf_8
   - libbrotlienc=1.0.9=h166bdaf_8
-  - libcblas=3.9.0=16_linux64_mkl
+  - libcblas=3.9.0=16_linux64_openblas
   - libcublas=11.9.2.110=h5e84587_0
   - libcublas-dev=11.9.2.110=h5c901ab_0
   - libcufft=10.7.1.112=hf425ae0_0
@@ -121,13 +127,14 @@ dependencies:
   - libhwloc=2.9.1=hd6dc26d_0
   - libiconv=1.17=h166bdaf_0
   - libjpeg-turbo=2.1.5.1=h0b41bf4_0
-  - liblapack=3.9.0=16_linux64_mkl
-  - liblapacke=3.9.0=16_linux64_mkl
+  - liblapack=3.9.0=16_linux64_openblas
+  - liblapacke=3.9.0=16_linux64_openblas
   - libnpp=11.6.3.124=hd2722f0_0
   - libnpp-dev=11.6.3.124=h3c42840_0
   - libnsl=2.0.0=h7f98852_0
   - libnvjpeg=11.6.2.124=hd473ad6_0
   - libnvjpeg-dev=11.6.2.124=hb5906b9_0
+  - libopenblas=0.3.21=pthreads_h78a6416_3
   - libpng=1.6.39=h753d276_0
   - libprotobuf=3.21.12=h3eb15da_0
   - libsqlite=3.41.2=h2797004_1
@@ -136,26 +143,30 @@ dependencies:
   - libuuid=2.38.1=h0b41bf4_0
   - libwebp-base=1.3.0=h0b41bf4_0
   - libxcb=1.13=h7f98852_1004
-  - libxml2=2.10.4=hfdac1af_0
+  - libxml2=2.10.3=hca2bb57_4
   - libzlib=1.2.13=h166bdaf_4
   - llvm-openmp=16.0.3=h4dfa4b3_0
+  - magma=2.6.2=hc72dce7_0
   - markdown=3.4.3=pyhd8ed1ab_0
   - markupsafe=2.1.2=py38h1de0b5d_0
   - matplotlib-base=3.7.1=py38hd6c3c57_0
-  - mkl=2022.1.0=h84fe81f_915
-  - mkl-devel=2022.1.0=ha770c72_916
-  - mkl-include=2022.1.0=h84fe81f_915
+  - mkl=2022.2.1=h84fe81f_16997
+  - mkl-devel=2022.2.1=ha770c72_16998
+  - mkl-include=2022.2.1=h84fe81f_16997
   - mpc=1.3.1=hfe3b2da_0
   - mpfr=4.2.0=hb012696_0
   - mpmath=1.3.0=pyhd8ed1ab_0
   - multidict=6.0.4=py38h1de0b5d_0
   - munkres=1.1.4=pyh9f0ad1d_0
+  - nccl=2.15.5.1=h0800d71_0
   - ncurses=6.3=h27087fc_1
   - networkx=3.1=pyhd8ed1ab_0
+  - ninja=1.11.1=h924138e_0
   - nsight-compute=2023.1.1.4=0
   - numpy=1.24.3=py38h59b608b_0
   - oauthlib=3.2.2=pyhd8ed1ab_0
   - openbabel=3.1.1=py38h3c5e4c7_5
+  - openblas=0.3.21=pthreads_h320a7e8_3
   - openjpeg=2.5.0=hfec8fc6_2
   - openssl=3.1.0=hd590300_3
   - packaging=23.1=pyhd8ed1ab_0
@@ -164,12 +175,16 @@ dependencies:
   - pillow=9.5.0=py38h961100d_0
   - pip=23.1.2=pyhd8ed1ab_0
   - pixman=0.40.0=h36c2ea0_0
+  - platformdirs=3.5.1=pyhd8ed1ab_0
+  - pooch=1.7.0=pyha770c72_3
   - protobuf=4.21.12=py38h8dc9893_0
+  - psutil=5.9.5=py38h1de0b5d_0
   - pthread-stubs=0.4=h36c2ea0_1001
   - pyasn1=0.4.8=py_0
   - pyasn1-modules=0.2.7=py_0
   - pycairo=1.23.0=py38h190342e_0
   - pycparser=2.21=pyhd8ed1ab_0
+  - pyg=2.2.0=py38_torch_1.13.0_cu116
   - pyjwt=2.7.0=pyhd8ed1ab_0
   - pyopenssl=23.1.1=pyhd8ed1ab_0
   - pyparsing=3.0.9=pyhd8ed1ab_0
@@ -179,27 +194,35 @@ dependencies:
   - python-lmdb=1.4.1=py38h8dc9893_0
   - python-tzdata=2023.3=pyhd8ed1ab_0
   - python_abi=3.8=3_cp38
-  - pytorch=2.0.1=py3.8_cpu_0
+  - pytorch=1.13.1=cuda112py38hd94e077_200
+  - pytorch-cluster=1.6.0=py38_torch_1.13.0_cu116
   - pytorch-cuda=11.6=h867d48c_1
   - pytorch-mutex=1.0=cpu
+  - pytorch-scatter=2.1.0=py38_torch_1.13.0_cu116
+  - pytorch-sparse=0.6.15=py38_torch_1.13.0_cu116
   - pytz=2023.3=pyhd8ed1ab_0
   - pyu2f=0.1.5=pyhd8ed1ab_0
   - pyyaml=6.0=py38h0a891b7_5
-  - rdkit=2023.03.1=py38h36d2b2f_0
+  - rdkit=2022.03.2=py38ha829ea6_1
   - re2=2023.02.02=hcb278e6_0
   - readline=8.2=h8228510_1
   - reportlab=3.6.13=py38h57c54bf_0
   - requests=2.29.0=pyhd8ed1ab_0
   - requests-oauthlib=1.3.1=pyhd8ed1ab_0
   - rsa=4.9=pyhd8ed1ab_0
+  - scikit-learn=1.2.2=py38hd4b6e60_1
+  - scipy=1.10.1=py38h59f1b5f_2
   - setuptools=67.7.2=pyhd8ed1ab_0
   - six=1.16.0=pyh6c4a22f_0
+  - sleef=3.5.1=h9b69904_2
   - sqlalchemy=2.0.13=py38h01eb140_0
   - sympy=1.11.1=pypyh9d50eac_103
   - tbb=2021.9.0=hf52228f_0
   - tensorboard=2.13.0=pyhd8ed1ab_0
   - tensorboard-data-server=0.7.0=py38h3d167d9_0
+  - threadpoolctl=3.1.0=pyh8a188c0_0
   - tk=8.6.12=h27826a3_0
+  - tqdm=4.65.0=pyhd8ed1ab_1
   - typing-extensions=4.5.0=hd8ed1ab_0
   - typing_extensions=4.5.0=pyha770c72_0
   - unicodedata2=15.0.0=py38h0a891b7_0
@@ -230,5 +253,4 @@ dependencies:
       - mmcif-pdbx==2.0.1
       - pdb2pqr==3.6.1
       - propka==3.5.0
-      - scipy==1.10.1
       - vina==1.2.2
