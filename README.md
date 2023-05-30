@@ -149,7 +149,7 @@ you need to specify the feature you want to use in the training config (like `co
 _NOTE: For the supervised learning setting, since the training results on PDBBind v2020 are lost by accident, 
 we can only provide the model checkpoint trained on PDBBind v2016 in the preliminary experiments for now. 
 However, it can already make accurate prediction for the practical use. 
-We will update retrain the models on PDBBind v2020 and provide the trained checkpoints as soon._
+We will retrain the models on PDBBind v2020 and provide the trained checkpoints as soon._
 
 https://drive.google.com/drive/folders/1-ftaIrTXjWFhw3-0Twkrs5m0yX6CNarz?usp=share_link
 
