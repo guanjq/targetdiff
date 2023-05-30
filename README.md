@@ -38,6 +38,8 @@ python -m pip install git+https://github.com/Valdes-Tresanco-MS/AutoDockTools_py
 ```
 The code should work with PyTorch >= 1.9.0 and PyG >= 2.0. You can change the package version according to your need.
 
+-----
+# Target-Aware Molecule Generation
 ## Data
 The data used for training / evaluating the model are organized in the [data](https://drive.google.com/drive/folders/1j21cc7-97TedKh_El5E34yI8o5ckI7eK?usp=share_link) Google Drive folder.
 
@@ -103,6 +105,82 @@ You can directly evaluate from the meta file, e.g.:
 ```bash
 python scripts/evaluate_from_meta.py sampling_results/targetdiff_vina_docked.pt --result_path eval_targetdiff
 ```
+
+**One can reproduce the results reported in the paper quickly with [notebooks/summary.ipynb](notebooks/summary.ipynb)**
+
+-----
+# Binding Affinity Prediction
+
+## Data
+* In the unsupervised learning setting, we still use the CrossDocked2020 dataset and find the data with experimentally measured binding affinity (saved in `affinity_info.pkl`) for further analysis. 
+
+* In the supervised learning setting, we use the PDBBind dataset, which can be downloaded from: http://www.pdbbind.org.cn. 
+The downloaded refined / general set should be saved in data/pdbbind_v{YEAR} directory. 
+
+Take the PDBBind v2016 for example, you need to first unzip the data:
+```bash
+mkdir -p data/pdbbind_v2016 && tar -xzvf data/pdbbind_v2016_refined.tar.gz -C data/pdbbind_v2016
+```
+Then, you can extract 10A pockets and split the dataset using the following commands:
+```bash
+# extract pockets
+python scripts/property_prediction/extract_pockets.py --source data/pdbbind_v2016 --subset refined --refined_index_pkl data/pdbbind_v2016/pocket_10_refined/index.pkl
+
+# split dataset
+python scripts/property_prediction/pdbbind_split.py --index_path data/pdbbind_v2016/pocket_10_refined/index.pkl  --save_path data/pdbbind_v2016/pocket_10_refined/split.pt
+```
+
+## Training
+One can train the binding affinity prediction model with:
+```bash
+python scripts/property_prediction/train_prop.py configs/prop/pdbbind_general_egnn.yml
+```
+
+It is also possible to enhance the model with extra features extracted from the unsupervised generative model. You need to first export the hidden states with:
+
+```bash
+python scripts/likelihood_est_diffusion_pdbbind.py
+```
+
+This command will dump various meta information and 
+you need to specify the feature you want to use in the training config (like `configs/prop/pdbbind_general_egnn.yml`) of the following supervised prediction model.
+
+### Trained model checkpoint
+_NOTE: For the supervised learning setting, since the training results on PDBBind v2020 are lost by accident, 
+we can only provide the model checkpoint trained on PDBBind v2016 in the preliminary experiments for now. 
+However, it can already make accurate prediction for the practical use. 
+We will update retrain the models on PDBBind v2020 and provide the trained checkpoints as soon._
+
+https://drive.google.com/drive/folders/1-ftaIrTXjWFhw3-0Twkrs5m0yX6CNarz?usp=share_link
+
+
+## Evaluation
+* For the unsupervised learning evaluation, please check [notebooks/analyze_affinity.ipynb](notebooks/analyze_affinity.ipynb)
+
+* For the supervised learning evaluation, one can use the following command to evaluate on the tes set:
+```bash
+python scripts/property_prediction/eval_prop.py --ckpt_path pretrained_models/egnn_pdbbind_v2016.pt
+```
+Expected results:
+
+| RMSE  | MAE   | R^2   | Pearson | Spearman |
+|-------|-------|-------|---------|----------|
+| 1.316 | 1.031 | 0.633 | 0.797   | 0.782    |
+
+
+## Inference
+To predict the binding affinity of a complex, one need to prepare the PDB file and SDF/MOL2 file first
+(**Important: for the supervised learning model trained on PDBBind v2016, both protein and ligand need to have hydrogen atoms**). 
+Then, the binding affinity can be predicted with [scripts/property_prediction/inference.py](scripts/property_prediction/inference.py). For example,
+```bash
+python scripts/property_prediction/inference.py \
+  --ckpt_path pretrained_models/egnn_pdbbind_v2016.pt \
+  --protein_path examples/3ug2_protein.pdb \
+  --ligand_path examples/3ug2_ligand.sdf \
+  --kind Kd
+```
+
+Expected prediction: Kd=5.23 nm.  Ground-truth: Kd=5.6 nm
 
 ## Citation
 ```

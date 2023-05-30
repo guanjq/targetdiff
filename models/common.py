@@ -5,14 +5,16 @@ from torch_geometric.nn import knn_graph
 
 
 class GaussianSmearing(nn.Module):
-    def __init__(self, start=0.0, stop=5.0, num_gaussians=50):
+    def __init__(self, start=0.0, stop=5.0, num_gaussians=50, fixed_offset=True):
         super(GaussianSmearing, self).__init__()
         self.start = start
         self.stop = stop
         self.num_gaussians = num_gaussians
-        # offset = torch.linspace(start, stop, num_gaussians)
-        # customized offset
-        offset = torch.tensor([0, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3, 3.5, 4, 4.5, 5, 5.5, 6, 7, 8, 9, 10])
+        if fixed_offset:
+            # customized offset
+            offset = torch.tensor([0, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3, 3.5, 4, 4.5, 5, 5.5, 6, 7, 8, 9, 10])
+        else:
+            offset = torch.linspace(start, stop, num_gaussians)
         self.coeff = -0.5 / (offset[1] - offset[0]).item() ** 2
         self.register_buffer('offset', offset)
 
@@ -133,6 +135,22 @@ def compose_context(h_protein, h_ligand, pos_protein, pos_ligand, batch_protein,
     pos_ctx = torch.cat([pos_protein, pos_ligand], dim=0)[sort_idx]  # (N_protein+N_ligand, 3)
 
     return h_ctx, pos_ctx, batch_ctx, mask_ligand
+
+
+def compose_context_prop(h_protein, h_ligand, pos_protein, pos_ligand, batch_protein, batch_ligand):
+    batch_ctx = torch.cat([batch_protein, batch_ligand], dim=0)
+    sort_idx = batch_ctx.argsort()
+
+    mask_protein = torch.cat([
+        torch.ones([batch_protein.size(0)], device=batch_protein.device).bool(),
+        torch.zeros([batch_ligand.size(0)], device=batch_ligand.device).bool(),
+    ], dim=0)[sort_idx]
+
+    batch_ctx = batch_ctx[sort_idx]
+    h_ctx = torch.cat([h_protein, h_ligand], dim=0)[sort_idx]       # (N_protein+N_ligand, H)
+    pos_ctx = torch.cat([pos_protein, pos_ligand], dim=0)[sort_idx]  # (N_protein+N_ligand, 3)
+
+    return h_ctx, pos_ctx, batch_ctx
 
 
 class ShiftedSoftplus(nn.Module):

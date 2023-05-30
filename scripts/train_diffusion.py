@@ -80,6 +80,7 @@ if __name__ == '__main__':
     dataset, subsets = get_dataset(
         config=config.data,
         transform=transform,
+        heavy_only=config.data.heavy_only
     )
     train_set, val_set = subsets['train'], subsets['test']
     logger.info(f'Training: {len(train_set)} Validation: {len(val_set)}')
