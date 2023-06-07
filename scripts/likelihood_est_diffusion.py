@@ -115,7 +115,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda:0')
     parser.add_argument('--config', type=str, default='configs/sampling/final_diffusion/aromatic_176k.yml')
-    parser.add_argument('--affinity_path', type=str, default='affinity_info.pkl')
+    parser.add_argument('--affinity_path', type=str, default='data/affinity_info.pkl')
     parser.add_argument('--index_path', type=str, default='data/crossdocked_v1.1_rmsd1.0_pocket10/index.pkl')
     parser.add_argument('--batch_size', type=int, default=4)
     parser.add_argument('--result_path', type=str, default='./outputs_embedding')

@@ -3,18 +3,23 @@ import py3Dmol
 from rdkit import Chem
 
 
-def visualize_protein_ligand(pdb_block, sdf_block, show_ligand=True, show_surface=True):
+def visualize_complex(pdb_block, sdf_block, show_protein_surface=True, show_ligand=True, show_ligand_surface=True):
     view = py3Dmol.view()
 
     # Add protein to the canvas
     view.addModel(pdb_block, 'pdb')
-    view.setStyle({'model': -1}, {'cartoon': {'color': 'spectrum'}, 'line': {}})
+    if show_protein_surface:
+        view.addSurface(py3Dmol.VDW, {'opacity': 0.7, 'color': 'white'}, {'model': -1})
+    else:
+        view.setStyle({'model': -1}, {'cartoon': {'color': 'spectrum'}, 'line': {}})
+    view.setStyle({'model': -1}, {"cartoon": {"style": "edged", 'opacity': 0}})
 
     # Add ligand to the canvas
     if show_ligand:
         view.addModel(sdf_block, 'sdf')
         view.setStyle({'model': -1}, {'stick': {}})
-        if show_surface:
+        # view.setStyle({'model': -1}, {'cartoon': {'color': 'spectrum'}, 'line': {}})
+        if show_ligand_surface:
             view.addSurface(py3Dmol.VDW, {'opacity': 0.8}, {'model': -1})
 
     view.zoomTo()
@@ -28,7 +33,7 @@ def visualize_data(data, root, show_ligand=True, show_surface=True):
         pdb_block = f.read()
     with open(ligand_path, 'r') as f:
         sdf_block = f.read()
-    return visualize_protein_ligand(pdb_block, sdf_block, show_ligand=show_ligand, show_surface=show_surface)
+    return visualize_complex(pdb_block, sdf_block, show_ligand=show_ligand, show_surface=show_surface)
 
 
 def visualize_generated_mol(protein_filename, mol, root, show_surface=False, opacity=0.5):
