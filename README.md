@@ -38,6 +38,22 @@ python -m pip install git+https://github.com/Valdes-Tresanco-MS/AutoDockTools_py
 ```
 The code should work with PyTorch >= 1.9.0 and PyG >= 2.0. You can change the package version according to your need.
 
+### (Alternatively) Install via Mamba
+Install Mamba
+
+```bash
+wget "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh"
+bash Mambaforge-$(uname)-$(uname -m).sh  # accept all terms and install to the default location
+rm Mambaforge-$(uname)-$(uname -m).sh  # (optionally) remove installer after using it
+source ~/.bashrc  # alternatively, one can restart their shell session to achieve the same result
+```
+
+Create Mamba environment
+```bash
+mamba env create -f environment.yaml
+conda activate targetdiff  # note: one still needs to use `conda` to (de)activate environments
+```
+
 -----
 # Target-Aware Molecule Generation
 ## Data
