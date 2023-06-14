@@ -93,7 +93,6 @@ def main():
             writer.add_scalar('train/lr', optimizer.param_groups[0]['lr'], it + epoch * num_it)
             writer.add_scalar('train/grad', orig_grad_norm, it + epoch * num_it)
             writer.flush()
-            break
 
     def validate(epoch, data_loader, scheduler, writer, prefix='Validate'):
         sum_loss, sum_n = 0, 0
