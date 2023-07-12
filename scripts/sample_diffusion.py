@@ -45,7 +45,7 @@ def sample_diffusion_ligand(model, data, num_samples, batch_size=16, device='cud
         with torch.no_grad():
             batch_protein = batch.protein_element_batch
             if sample_num_atoms == 'prior':
-                pocket_size = atom_num.get_space_size(batch.protein_pos.detach().cpu().numpy())
+                pocket_size = atom_num.get_space_size(data.protein_pos.detach().cpu().numpy())
                 ligand_num_atoms = [atom_num.sample_atom_num(pocket_size).astype(int) for _ in range(n_data)]
                 batch_ligand = torch.repeat_interleave(torch.arange(n_data), torch.tensor(ligand_num_atoms)).to(device)
             elif sample_num_atoms == 'range':
