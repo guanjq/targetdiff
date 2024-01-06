@@ -1,6 +1,6 @@
 import argparse
-import os
-
+import os,sys
+sys.path.append(os.getcwd())
 import numpy as np
 from rdkit import Chem
 from rdkit import RDLogger
@@ -13,7 +13,8 @@ from utils.evaluation import eval_atom_type, scoring_func, analyze, eval_bond_le
 from utils import misc, reconstruct, transforms
 from utils.evaluation.docking_qvina import QVinaDockingTask
 from utils.evaluation.docking_vina import VinaDockingTask
-
+from utils.evaluation.similarity import calculate_diversity
+import pickle
 
 def print_dict(d, logger):
     for k, v in d.items():
@@ -34,14 +35,14 @@ def print_ring_ratio(all_ring_sizes, logger):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('sample_path', type=str)
+    parser.add_argument('sample_path', type=str, default='sample_outputs/')
     parser.add_argument('--verbose', type=eval, default=False)
     parser.add_argument('--eval_step', type=int, default=-1)
     parser.add_argument('--eval_num_examples', type=int, default=None)
     parser.add_argument('--save', type=eval, default=True)
-    parser.add_argument('--protein_root', type=str, default='./data/crossdocked_v1.1_rmsd1.0')
+    parser.add_argument('--protein_root', type=str, default='./data/test_set')
     parser.add_argument('--atom_enc_mode', type=str, default='add_aromatic')
-    parser.add_argument('--docking_mode', type=str, choices=['qvina', 'vina_score', 'vina_dock', 'none'])
+    parser.add_argument('--docking_mode', type=str, choices=['qvina', 'vina_score', 'vina_dock', 'none'], default='vina_dock')
     parser.add_argument('--exhaustiveness', type=int, default=16)
     args = parser.parse_args()
 
@@ -52,18 +53,22 @@ if __name__ == '__main__':
         RDLogger.DisableLog('rdApp.*')
 
     # Load generated data
-    results_fn_list = glob(os.path.join(args.sample_path, '*result_*.pt'))
+    results_fn_list = glob(os.path.join(args.sample_path, 'result_0.pt'))
     results_fn_list = sorted(results_fn_list, key=lambda x: int(os.path.basename(x)[:-3].split('_')[-1]))
     if args.eval_num_examples is not None:
         results_fn_list = results_fn_list[:args.eval_num_examples]
     num_examples = len(results_fn_list)
     logger.info(f'Load generated data done! {num_examples} examples in total.')
+    with open('data/test_vina_crossdock_dict.pkl', 'rb') as f:
+        test_vina_score_list = pickle.load(f)
 
     num_samples = 0
     all_mol_stable, all_atom_stable, all_n_atom = 0, 0, 0
     n_recon_success, n_eval_success, n_complete = 0, 0, 0
     results = []
     all_pair_dist, all_bond_dist = [], []
+    diversity_list = []
+    high_affinity = []
     all_atom_types = Counter()
     success_pair_dist, success_atom_types = [], Counter()
     for example_idx, r_name in enumerate(tqdm(results_fn_list, desc='Eval')):
@@ -72,6 +77,8 @@ if __name__ == '__main__':
         all_pred_ligand_v = r['pred_ligand_v_traj']
         num_samples += len(all_pred_ligand_pos)
 
+        mol_list = []
+        high_affinity_list = []
         for sample_idx, (pred_pos, pred_v) in enumerate(zip(all_pred_ligand_pos, all_pred_ligand_v)):
             pred_pos, pred_v = pred_pos[args.eval_step], pred_v[args.eval_step]
 
@@ -108,6 +115,7 @@ if __name__ == '__main__':
                     vina_task = QVinaDockingTask.from_generated_mol(
                         mol, r['data'].ligand_filename, protein_root=args.protein_root)
                     vina_results = vina_task.run_sync()
+                    high_affinity_list.append(vina_results[0]['affinity'] < test_vina_score_list[r['data'].protein_filename])
                 elif args.docking_mode in ['vina_score', 'vina_dock']:
                     vina_task = VinaDockingTask.from_generated_mol(
                         mol, r['data'].ligand_filename, protein_root=args.protein_root)
@@ -117,6 +125,7 @@ if __name__ == '__main__':
                         'score_only': score_only_results,
                         'minimize': minimize_results
                     }
+                    high_affinity_list.append(score_only_results[0]['affinity'] < test_vina_score_list[r['data'].protein_filename])
                     if args.docking_mode == 'vina_dock':
                         docking_results = vina_task.run(mode='dock', exhaustiveness=args.exhaustiveness)
                         vina_results['dock'] = docking_results
@@ -136,6 +145,7 @@ if __name__ == '__main__':
             success_pair_dist += pair_dist
             success_atom_types += Counter(pred_atom_type)
 
+            mol_list.append(mol)
             results.append({
                 'mol': mol,
                 'smiles': smiles,
@@ -145,6 +155,9 @@ if __name__ == '__main__':
                 'chem_results': chem_results,
                 'vina': vina_results
             })
+
+        diversity_list.append(calculate_diversity(mol_list))
+        high_affinity.append(np.mean(high_affinity_list))
     logger.info(f'Evaluate done! {num_samples} samples in total.')
 
     fraction_mol_stable = all_mol_stable / num_samples
@@ -199,6 +212,17 @@ if __name__ == '__main__':
 
     # check ring distribution
     print_ring_ratio([r['chem_results']['ring_size'] for r in results], logger)
+
+    logger.info('Diversity:   Mean: %.3f Median: %.3f' % (np.mean(diversity_list), np.median(diversity_list)))
+    logger.info('high_affinity:  Mean: %.3f Median: %.3f' % (np.mean(high_affinity), np.median(high_affinity)))
+    if args.docking_mode == 'vina_dock':
+        success_rate = []
+        for r in results:
+            if r['chem_results']['qed'] > 0.25 and r['chem_results']['sa'] > 0.59 and r['vina']['dock'][0]['affinity'] < -8.18:
+                success_rate.append(1)
+            else:
+                success_rate.append(0)
+        logger.info('Success Rate:  Mean: %.3f' % (np.mean(success_rate)))
 
     if args.save:
         torch.save({
