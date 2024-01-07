@@ -97,7 +97,7 @@ class QVinaDockingTask(BaseDockingTask):
         ligand_rdmol = next(iter(Chem.SDMolSupplier(ligand_path)))
         return cls(pdb_block, ligand_rdmol, **kwargs)
 
-    def __init__(self, pdb_block, ligand_rdmol, conda_env='adt', tmp_dir='./tmp', use_uff=True, center=None,
+    def __init__(self, pdb_block, ligand_rdmol, conda_env='targetdiff', tmp_dir='./tmp', use_uff=True, center=None,
                  size_factor=1.):
         super().__init__(pdb_block, ligand_rdmol)
         self.conda_env = conda_env
@@ -141,15 +141,17 @@ class QVinaDockingTask(BaseDockingTask):
         self.docked_sdf_path = None
 
     def run(self, exhaustiveness=16):
+        import AutoDockTools
+        prepare_receptor = os.path.join(AutoDockTools.__path__[0], 'Utilities24/prepare_receptor4.py')
         commands = """
 eval "$(conda shell.bash hook)"
 conda activate {env}
 cd {tmp}
 # Prepare receptor (PDB->PDBQT)
-prepare_receptor4.py -r {receptor_id}.pdb
+python {prepare_receptor} -r {receptor_id}.pdb
 # Prepare ligand
 obabel {ligand_id}.sdf -O{ligand_id}.pdbqt
-qvina2 \
+/root/miniconda3/envs/targetdiff/bin/qvina2 \
     --receptor {receptor_id}.pdbqt \
     --ligand {ligand_id}.pdbqt \
     --center_x {center_x:.4f} \
@@ -169,9 +171,9 @@ obabel {ligand_id}_out.pdbqt -O{ligand_id}_out.sdf -h
             center_z=self.center[2],
             size_x=self.size_x,
             size_y=self.size_y,
-            size_z=self.size_z
+            size_z=self.size_z,
+            prepare_receptor=prepare_receptor
         )
-
         self.docked_sdf_path = os.path.join(self.tmp_dir, '%s_out.sdf' % self.ligand_id)
 
         self.proc = subprocess.Popen(

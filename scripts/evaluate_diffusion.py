@@ -125,7 +125,11 @@ if __name__ == '__main__':
                         'score_only': score_only_results,
                         'minimize': minimize_results
                     }
-                    high_affinity_list.append(score_only_results[0]['affinity'] < test_vina_score_list[r['data'].protein_filename])
+                    # high_affinity_list.append(score_only_results[0]['affinity'] < test_vina_score_list[r['data'].protein_filename])
+                    qvina_task = QVinaDockingTask.from_generated_mol(
+                        mol, r['data'].protein_filename,  protein_root=args.protein_root)
+                    qvina_results = qvina_task.run_sync()
+                    high_affinity_list.append(qvina_results[0]['affinity'] < test_vina_score_list[r['data'].protein_filename])
                     if args.docking_mode == 'vina_dock':
                         docking_results = vina_task.run(mode='dock', exhaustiveness=args.exhaustiveness)
                         vina_results['dock'] = docking_results
@@ -133,7 +137,8 @@ if __name__ == '__main__':
                     vina_results = None
 
                 n_eval_success += 1
-            except:
+            except Exception as e:
+                print(e)
                 if args.verbose:
                     logger.warning('Evaluation failed for %s' % f'{example_idx}_{sample_idx}')
                 continue
