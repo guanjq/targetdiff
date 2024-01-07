@@ -53,7 +53,7 @@ if __name__ == '__main__':
         RDLogger.DisableLog('rdApp.*')
 
     # Load generated data
-    results_fn_list = glob(os.path.join(args.sample_path, 'result_0.pt'))
+    results_fn_list = glob(os.path.join(args.sample_path, 'result_*.pt'))
     results_fn_list = sorted(results_fn_list, key=lambda x: int(os.path.basename(x)[:-3].split('_')[-1]))
     if args.eval_num_examples is not None:
         results_fn_list = results_fn_list[:args.eval_num_examples]
